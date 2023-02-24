@@ -1,38 +1,59 @@
 ﻿#include <iostream>
 #include <stack>
 #include <string>
+#include <Windows.h>
 using namespace std;
 class Student {
-public:
+
     string surname;
     int id;
     double rating;
-
+public:
+    Student()
+    {
+    }
     Student(string surname, int id, double rating) {
         this->surname = surname;
         this->id = id;
         this->rating = rating;
     }
+    string get_surname() {
+        return surname;
+    }
+    friend ostream& operator << (ostream& os, const Student& s) {
+        os << "ID: " << s.id << endl
+           << "rating: " << s.rating << endl
+           << "surname: " << s.surname << endl;
+        return os;
+    }
+    friend istream& operator >> (istream& is, Student& s) {
+        getline(is, s.surname);
+        string buffer;
+        getline(is, buffer);
+        s.id = stoi(buffer);
+        buffer.clear();
+        getline(is, buffer);
+        s.rating = stod(buffer);
+        return is;
+    }
 };
 int main() {
-    setlocale(LC_ALL, "Ukrainian");
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
     stack<Student> students;
-    students.push({ "Миколенко", 890123, 82.1 });
-    students.push({ "Литвиненко", 901234, 71.2 });
-    students.push({ "Захарчук", 102345, 89.6 });
-    students.push({ "Ткаченко", 213456, 74.5 });
-    students.push({ "Павлюк", 324567, 91.7 });
-    students.push({ "Кравченко", 435678, 84.3 });
+    Student buffer;
+    for (int i = 0; i < 2; i++) {
+        cin >> buffer;
+        students.push(buffer);
+    }
     string surname_to_remove = "Ткаченко";
-    while (!students.empty() && students.top().surname != surname_to_remove) {
-        cout << "Surname: " << students.top().surname << endl;
-        cout << "ID: " << students.top().id << endl;
-        cout << "Rating: " << students.top().rating << endl;
+    while (!students.empty() ) {
+        if (students.top().get_surname() == surname_to_remove)
+        {
+            cout  << students.top() << endl;
+            break;
+        }
         students.pop();
     }
-    if (!students.empty()) {
-        students.pop();
-
-        return 0;
-    }
+     return 0;
 }
